@@ -46,8 +46,14 @@ namespace AwaraIt.Hackathon.WebSite.Controllers
                 return BadRequest();
 
             var commentId = Guid.NewGuid();
+			var commentIdParameter = new SqlParameter("commentId", commentId);
+			var textParameter = new SqlParameter("text", text);
+			var idParameter = new SqlParameter("id", id);
+			var userIdParameter = new SqlParameter("userId", UserId);
+
             Context.Database.ExecuteSqlRaw(
-                string.Format(InsertQuery, commentId, text, id, UserId));
+                "insert into Comments (Id, Message, ImageId, DateOfCreation, UserId, Deleted) \n" +
+				"values(@commentId, @text, @id, getdate(), @userId, 0)", commentIdParameter, textParameter, idParameter, userIdParameter);
             var comment = await Context.Comments.FirstOrDefaultAsync(x => x.Id == commentId);
 
             /*var comment = await Context.Comments.AddAsync(
@@ -74,9 +80,10 @@ namespace AwaraIt.Hackathon.WebSite.Controllers
 
         }
 
-        private const string InsertQuery =
+        /*private const string InsertQuery =
             "insert into Comments (Id, Message, ImageId, DateOfCreation, UserId, Deleted) \n" +
             "values('{0}', '{1}', '{2}', getdate(), '{3}', 0)";
+			*/
     }
 }
 
